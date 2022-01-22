@@ -1,2 +1,3 @@
-# unet
-a study on semantic segmentation
+# UNet study
+
+Repo for studies on semantic segmentation for remote sensing imagery
