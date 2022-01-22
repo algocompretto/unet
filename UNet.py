@@ -128,4 +128,15 @@ class Decoder(nn.Module):
         return x
 
 class ResNet34_UNet(nn.Module):
-    pass
+    def __init__(self, num_classes=2, num_channels=3, pretrained=True):
+        super(ResNet34_UNet, self).__init__()
+
+        pass
+
+
+    def forward(self, x):
+        # Encoding part
+
+        # Decoding part
+
+        pass
