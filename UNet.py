@@ -145,15 +145,15 @@ class ResNet34_UNet(nn.Module):
         self.encoder3 = resnet.layer3
         self.encoder4 = resnet.layer4
 
-        self.decoder4 = DecoderBlock(512, filters[2])
-        self.decoder3 = DecoderBlock(filters[2], filters[1])
-        self.decoder2 = DecoderBlock(filters[1], filters[0])
-        self.decoder1 = DecoderBlock(filters[0], filters[0])
+        self.decoder4 = Decoder(512, filters[2])
+        self.decoder3 = Decoder(filters[2], filters[1])
+        self.decoder2 = Decoder(filters[1], filters[0])
+        self.decoder1 = Decoder(filters[0], filters[0])
 
-        self.decoder4 = DecoderBlock(512, filters[2])
-        self.decoder3 = DecoderBlock(filters[2], filters[1])
-        self.decoder2 = DecoderBlock(filters[1], filters[0])
-        self.decoder1 = DecoderBlock(filters[0], filters[0])
+        self.decoder4 = Decoder(512, filters[2])
+        self.decoder3 = Decoder(filters[2], filters[1])
+        self.decoder2 = Decoder(filters[1], filters[0])
+        self.decoder1 = Decoder(filters[0], filters[0])
 
         self.finaldeconv1 = nn.ConvTranspose2d(filters[0], 32, 4, 2, 1)
         self.finalrelu1 = nonlinearity

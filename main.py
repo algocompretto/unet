@@ -4,8 +4,11 @@ import logging
 import argparse
 from torch import autograd, optim
 from torch.utils.data import DataLoader
-from UNet import UNet, ResNet34_Unet
+from UNet import UNet, ResNet34_UNet
 from torchvision.transforms import transforms
+
+from dataset import *
+from metrics import *
 
 def getArgs():
     parse = argparse.ArgumentParser()
@@ -39,13 +42,13 @@ def getLog(args):
 
 def getModel(args):
     if args.arch == 'UNet':
-        model = Unet(3,1).to(device)
+        model = UNet(3,1).to(device)
     if args.arch == 'ResNet34_UNet':
         model = ResNet34_UNet(1, pretrained=False).to(device)
 
 def getDataset(args):
     train_dataloaders, val_dataloaders, test_dataloaders = None, None, None
-    if args.dataset='remote-sensing':
+    if args.dataset=='remote-sensing':
         train_dataset = RemoteSensing('train', transform=x_transforms, 
                 target_transform=y_transforms)
         train_dataloaders = DataLoader(train_dataset, batch_size=args.batch_size)
@@ -57,7 +60,42 @@ def getDataset(args):
     return train_dataloaders, val_dataloaders, test_dataloaders
 
 def val(model, best_iou, val_dataloaders):
-    pass
+    model = model.eval()
+    with torch.no_grad():
+        i = 0
+        miou_total = 0
+        hd_total = 0
+        dice_total = 0
+        num = len(val_dataloaders)
+
+        for x, _, pic, mask in val_dataloaders:
+            x = x.to(device)
+            y = model(x)
+
+            if args.deepsupervision:
+                img_y = torch.squeeze(y[-1]).cpu().numpy()
+            else:
+                img_y = torch.squeeze(y).cpu().numpy()
+
+            hd_total += get_hd(mask[0], img_y)
+            miou_total += get_iou(mask[0], img_y)
+            dice_total += get_dice(mask[0], img_y)
+            if i < num: i+=1
+
+        aver_iou = miou_total / num
+        aver_hd = hd_total / num
+        aver_dice = dice_total / num
+
+        print(f"MIOU {aver_iou}   AVER_HD {aver_hd}   AVER_DICE {aver_dice}")
+        
+        if aver_iou > best_iou:
+            print(f"AVER_IOU {aver_iou} > BEST_IOU {best_iou}")
+            best_iou = aver_iou
+            print("[INFO] Saving best model...")
+            torch.save(model.state_dict(), f"./saved_model/{args.arch}_{args.batch_size}_{args.dataset}_{args.epoch}.pth")
+
+        return best_iou, aver_iou, aver_dice, aver_hd
+
 
 def train(model, criterion, optimizer, train_dataloader, val_dataloader, args):
     pass
@@ -74,12 +112,10 @@ if __name__ == "__main__":
     args = getArgs()
     logging = getLog(args)
 
-    print('**************************')
-    print('models:%s,\nepoch:%s,\nbatch size:%s\ndataset:%s' % \
-          (args.arch, args.epoch, args.batch_size,args.dataset))
-    logging.info('\n=======\nmodels:%s,\nepoch:%s,\nbatch size:%s\ndataset:%s\n========' % \
-          (args.arch, args.epoch, args.batch_size,args.dataset))
-    print('**************************')
+    print('='*25)
+    print(f"models:{args.arch},\nepoch:{args.epoch},\nbatch size:{args.batch_size}\ndataset:{args.dataset}")
+    logging.info(f"\n{25*'-'}\nmodels:{args.arch},\nepoch:{args.epoch},\nbatch size:{args.batch_size}\ndataset:{args.dataset}\n{25*'-'}\n")
+    print('='*25)
 
     model = getModel(args)
 
