@@ -8,6 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
+env/
 build/
 develop-eggs/
 dist/
@@ -26,6 +27,9 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+*.egg-info/
+.installed.cfg
+*.egg
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -50,6 +54,7 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
+.hypothesis/
 
 # Translations
 *.mo
@@ -97,6 +102,11 @@ __pypackages__/
 # Celery stuff
 celerybeat-schedule
 celerybeat.pid
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
 
 # SageMath parsed files
 *.sage.py
@@ -109,6 +119,13 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+# dotenv
+.env
+
+# virtualenv
+.venv
+venv/
+ENV/
 
 # Spyder project settings
 .spyderproject
@@ -127,3 +144,18 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Pycharm
+.idea/
+
+# Experiments
+experiments/*
+!experiments/.keep
+
+# Pretrained Weights
+pretrained_weights/*
+!pretrained_weights/.keep
+
+# Data
+data/*
+!data/.keep
