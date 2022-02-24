@@ -1,43 +1,58 @@
 """
 An example for dataset loaders, starting with data loading including all the functions that either preprocess or postprocess data.
 """
+import cv2
 import imageio
 import torch
 import torchvision.utils as v_utils
-from torch.utils.data import DataLoader, TensorDataset, Dataset
+from torch.utils.data import Dataset
+from PIL import Image
+from torchvision import transforms as T
 
-
-class ExampleDataLoader:
-    def __init__(self, config):
-        """
-        :param config:
-        """
-        self.config = config
-        if config.data_mode == "imgs":
-            raise NotImplementedError("This mode is not implemented YET")
-
-        elif config.data_mode == "numpy":
-            raise NotImplementedError("This mode is not implemented YET")
-
-        elif config.data_mode == "random":
-            train_data = torch.randn(self.config.batch_size, self.config.input_channels, self.config.img_size, self.config.img_size)
-            train_labels = torch.ones(self.config.batch_size).long()
-            valid_data = train_data
-            valid_labels = train_labels
-            self.len_train_data = train_data.size()[0]
-            self.len_valid_data = valid_data.size()[0]
-
-            self.train_iterations = (self.len_train_data + self.config.batch_size - 1) // self.config.batch_size
-            self.valid_iterations = (self.len_valid_data + self.config.batch_size - 1) // self.config.batch_size
-
-            train = TensorDataset(train_data, train_labels)
-            valid = TensorDataset(valid_data, valid_labels)
-
-            self.train_loader = DataLoader(train, batch_size=config.batch_size, shuffle=True)
-            self.valid_loader = DataLoader(valid, batch_size=config.batch_size, shuffle=False)
-
-        else:
-            raise Exception("Please specify in the json a specified mode in data_mode")
+class DroneDataset(Dataset):
+    def __init__(self, img_path, mask_path, X, mean, std, transform=None, patch=False):
+        self.img_path = img_path
+        self.mask_path = mask_path
+        self.X = X
+        self.transform = transform
+        self.patches = patch
+        self.mean = mean
+        self.std = std
+        
+    def __len__(self):
+        return len(self.X)
+    
+    def __getitem__(self, idx):
+        img = cv2.imread(self.img_path + self.X[idx] + '.jpg')
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        mask = cv2.imread(self.mask_path + self.X[idx] + '.png', cv2.IMREAD_GRAYSCALE)
+        
+        if self.transform is not None:
+            aug = self.transform(image=img, mask=mask)
+            img = Image.fromarray(aug['image'])
+            mask = aug['mask']
+        
+        if self.transform is None:
+            img = Image.fromarray(img)
+        
+        t = T.Compose([T.ToTensor(), T.Normalize(self.mean, self.std)])
+        img = t(img)
+        mask = torch.from_numpy(mask).long()
+        
+        if self.patches:
+            img, mask = self.tiles(img, mask)
+            
+        return img, mask
+    
+    def tiles(self, img, mask):
+        img_patches = img.unfold(1, 512, 512).unfold(2, 768, 768) 
+        img_patches  = img_patches.contiguous().view(3,-1, 512, 768) 
+        img_patches = img_patches.permute(1,0,2,3)
+        
+        mask_patches = mask.unfold(0, 512, 512).unfold(1, 768, 768)
+        mask_patches = mask_patches.contiguous().view(-1, 512, 768)
+        
+        return img_patches, mask_patches
 
     def plot_samples_per_epoch(self, batch, epoch):
         """
@@ -72,4 +87,5 @@ class ExampleDataLoader:
 
     def finalize(self):
         pass
+
 
