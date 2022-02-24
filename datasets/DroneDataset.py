@@ -5,19 +5,28 @@ import cv2
 import imageio
 import torch
 import torchvision.utils as v_utils
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset as BaseDataset
 from PIL import Image
+import albumentations as A
 from torchvision import transforms as T
 
-class DroneDataset(Dataset):
-    def __init__(self, img_path, mask_path, X, mean, std, transform=None, patch=False):
+transform_train = A.Compose([A.Resize(704, 1056, interpolation=cv2.INTER_NEAREST), A.HorizontalFlip(), A.VerticalFlip(), 
+                     A.GridDistortion(p=0.2), A.RandomBrightnessContrast((0,0.5),(0,0.5)),
+                     A.GaussNoise()])
+
+transform_val = A.Compose([A.Resize(704, 1056, interpolation=cv2.INTER_NEAREST), A.HorizontalFlip(),
+                   A.GridDistortion(p=0.2)])
+
+
+class DroneDataset(BaseDataset):
+    def __init__(self, img_path, mask_path, X, transform=None, patch=False):
         self.img_path = img_path
         self.mask_path = mask_path
         self.X = X
         self.transform = transform
         self.patches = patch
-        self.mean = mean
-        self.std = std
+        self.mean = [0.485, 0.456, 0.406]
+        self.std = [0.229, 0.224, 0.225]
         
     def __len__(self):
         return len(self.X)
