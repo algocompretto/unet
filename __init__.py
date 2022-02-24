@@ -1,1 +1,1 @@
-__authors__ = ["Mo'men", "Hager"]
+__authors__ = ["Gustavo Pretto Scholze"]

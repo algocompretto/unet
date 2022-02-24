@@ -27,10 +27,4 @@
 
   "data_mode": "imgs",
   "data_folder": "./data/segmentation"
-  "mask_path": mask_path
-  "X": X
-  "transform": transform
-  "patches": patch
-  "mean": mean
-  "std": std
 }
