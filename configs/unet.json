@@ -1,11 +1,11 @@
 {
-  "exp_name": "example_exp_0",
-  "agent": "",
+  "exp_name": "unet_exp_0",
+  "agent": "UNet",
   "mode": "train",
 
-  "cuda": true,
+  "cuda": false,
   "gpu_device": 0,
-  "seed": 1337,
+  "seed": 42,
 
   "some_model_attribute": 0,
 
@@ -22,11 +22,11 @@
 
   "checkpoint_file": "checkpoint.pth.tar",
 
-  "data_loader": "ExampleDataLoader",
+  "data_loader": "DroneDataset",
   "data_loader_workers": 2,
   "pin_memory": true,
   "async_loading": true,
 
   "data_mode": "imgs",
-  "data_folder": "./data/example"
+  "data_folder": "./data/segmentation"
 }
