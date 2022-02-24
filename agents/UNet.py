@@ -12,7 +12,7 @@ from torch.autograd import Variable
 from agents.base import BaseAgent
 
 # import your classes here
-from graphs.models.unet import UNet
+from graphs.models.unet import unet
 from datasets.DroneDataset import DroneDataset
 
 from tensorboardX import SummaryWriter
@@ -21,9 +21,6 @@ from utils.misc import print_cuda_statistics
 
 cudnn.benchmark = False
 
-# import segmentation_models_pytorch as smp
-# model = smp.Unet('mobilenet_v2', encoder_weights='imagenet', classes=23, activation=None, encoder_depth=5, decoder_channels=[256, 128, 64, 32, 16])
-
 
 class UNet(BaseAgent):
 
@@ -31,7 +28,7 @@ class UNet(BaseAgent):
         super().__init__(config)
 
         # define models
-        self.model = UNet
+        self.model = unet(n_channels=3, n_classes=23)
 
         # define data_loader
         self.data_loader = DroneDataset
@@ -40,7 +37,7 @@ class UNet(BaseAgent):
         self.loss = nn.CrossEntropyLoss()
 
         # define optimizers for both generator and discriminator
-        self.optimizer = torch.optim.AdamW(self.model.parameters(), lr=self.config.learning_rate, weight_decay=self.config.weight_decay)
+        self.optimizer = torch.optim.Adam(params=self.model.parameters(), lr=self.config.learning_rate, weight_decay=self.config.weight_decay)
 
         # initialize counter
         self.current_epoch = 0
