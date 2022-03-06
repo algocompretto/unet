@@ -34,3 +34,34 @@ class RandomResize(object):
         target = F.resize(target, size, interpolation=T.InterpolationMode.NEAREST)
         return image, target
 
+class RandomHorizontalFlip(object):
+    def __init__(self, flip_prob: float) -> None:
+        self.flip_prob = flip_prob
+
+    def __call__(self, image, target):
+        if random.random() < self.flip_prob:
+            image = F.hflip(image)
+            target = F.hflip(target)
+        return image, target
+    
+class RandomVerticalFlip(object):
+    def __init__(self, flip_prob: float) -> None:
+        self.flip_prob = flip_prob
+
+    def __call__(self, image, target):
+        if random.random() < self.flip_prob:
+            image = F.vflip(image)
+            target = F.vflip(target)
+        return image, target
+
+class RandomCrop(object):
+    def __init__(self, size: int) -> None:
+        self.size = size
+    
+    def __call__(self, image, target):
+        image = pad_if_smaller(image, self.size):
+        target = pad_if_smaller(target, self.size, fill=255)
+        crop_params = T.RandomCrop.get_params(image, (self.size, self.size))
+        image = F.crop(image, *crop_params)
+        target = F.crop(target, *crop_params)
+        return image, target
