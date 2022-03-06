@@ -65,3 +65,28 @@ class RandomCrop(object):
         image = F.crop(image, *crop_params)
         target = F.crop(target, *crop_params)
         return image, target
+
+class CenterCrop(object):
+    def __init__(self, size):
+        self.size = size
+    
+    def __call__(self, image, target):
+        image = F.center_crop(image, self.size)
+        target = F.center_crop(target, self.size)
+        return image, target
+
+
+class ToTensor(object):
+    def __call__(self, image, target):
+        image = F.to_tensor(image)
+        target = F.to_tensor(target)
+        return image, target
+    
+class Normalize(object):
+    def __init__(self, mean:float, std=float) -> None:
+        self.mean = mean
+        self.std = std
+
+    def __call__(self, image, target):
+        image = F.normalize(image, mean=self.mean, std=self.std)
+        return image, target
