@@ -20,7 +20,7 @@ opencv-python-headless==4.5.5.62
 packaging==21.3
 Pillow==9.3.0
 pretrainedmodels==0.7.4
-protobuf==3.19.4
+protobuf==3.19.5
 pyparsing==3.0.7
 python-dateutil==2.8.2
 PyWavelets==1.2.0
