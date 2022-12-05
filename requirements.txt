@@ -1,3 +1,6 @@
 black==22.10.0
+kaggle==1.5.12
+matplotlib==3.6.2
 pip-chill==1.0.1
 torchvision==0.14.0
+wandb==0.13.5

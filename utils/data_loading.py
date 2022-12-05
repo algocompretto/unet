@@ -65,6 +65,7 @@ class BasicDataset(Dataset):
         else:
             return Image.open(filename)
 
+
     def __getitem__(self, idx):
         name = self.ids[idx]
         mask_file = list(self.masks_dir.glob(name + self.mask_suffix + ".*"))
@@ -92,6 +93,6 @@ class BasicDataset(Dataset):
         }
 
 
-class CarvanaDataset(BasicDataset):
+class TGSDataset(BasicDataset):
     def __init__(self, images_dir, masks_dir, scale=1):
-        super().__init__(images_dir, masks_dir, scale, mask_suffix="_mask")
+        super().__init__(images_dir, masks_dir, scale)

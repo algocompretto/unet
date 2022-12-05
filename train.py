@@ -11,13 +11,13 @@ from torch import optim
 from torch.utils.data import DataLoader, random_split
 from tqdm import tqdm
 
-from utils.data_loading import BasicDataset, CarvanaDataset
+from utils.data_loading import BasicDataset, TGSDataset
 from utils.dice_score import dice_loss
 from evaluate import evaluate
 from unet import UNet
 
-dir_img = Path("./data/train_hq/")
-dir_mask = Path("./data/train_masks/")
+dir_img = Path("./data/images/")
+dir_mask = Path("./data/masks/")
 dir_checkpoint = Path("./checkpoints/")
 
 
@@ -34,7 +34,7 @@ def train_net(
 ):
     # 1. Create dataset
     try:
-        dataset = CarvanaDataset(dir_img, dir_mask, img_scale)
+        dataset = TGSDataset(dir_img, dir_mask, img_scale)
     except (AssertionError, RuntimeError):
         dataset = BasicDataset(dir_img, dir_mask, img_scale)
 
@@ -109,6 +109,8 @@ def train_net(
 
                 with torch.cuda.amp.autocast(enabled=amp):
                     masks_pred = net(images)
+                    print("masks prediction:", masks_pred.shape)
+                    print("true masks:", true_masks.shape)
                     loss = criterion(masks_pred, true_masks) + dice_loss(
                         F.softmax(masks_pred, dim=1).float(),
                         F.one_hot(true_masks, net.n_classes)
