@@ -184,7 +184,7 @@ def get_args():
         description="Train the UNet on images and target masks"
     )
     parser.add_argument(
-        "--epochs", "-e", metavar="E", type=int, default=5, help="Number of epochs"
+        "--epochs", "-e", metavar="E", type=int, default=1, help="Number of epochs"
     )
     parser.add_argument(
         "--batch-size",
@@ -239,7 +239,7 @@ if __name__ == "__main__":
     args = get_args()
 
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
-    device = torch.device("cpu" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     logging.info(f"Using device {device}")
 
     # Change here to adapt to your data
