@@ -65,7 +65,7 @@ class RandomCrop(object):
         self.size = size
     
     def __call__(self, image, target):
-        image = pad_if_smaller(image, self.size):
+        image = pad_if_smaller(image, self.size)
         target = pad_if_smaller(target, self.size, fill=255)
         crop_params = T.RandomCrop.get_params(image, (self.size, self.size))
         image = F.crop(image, *crop_params)
