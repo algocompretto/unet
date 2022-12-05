@@ -3,7 +3,7 @@ import torch.nn as nn
 
 
 def build_target(target: torch.Tensor, num_classes: int = 2, ignore_index: int = -100):
-    """ Build target for DICE coefficient """
+    """Build target for DICE coefficient"""
     dice_target = target.clone()
     if ignore_index >= 0:
         ignore_mask = torch.eq(target, ignore_index)
@@ -16,8 +16,13 @@ def build_target(target: torch.Tensor, num_classes: int = 2, ignore_index: int =
     return dice_target.permute(0, 3, 1, 2)
 
 
-def dice_coeff(x: torch.Tensor, target: torch.Tensor, ignore_index: int = -100, epsilon: float = 1e-6):
-    """ Average of DICE coefficient for all batcher, or for a single mask """
+def dice_coeff(
+    x: torch.Tensor,
+    target: torch.Tensor,
+    ignore_index: int = -100,
+    epsilon: float = 1e-6,
+):
+    """Average of DICE coefficient for all batcher, or for a single mask"""
     d = 0.0
     batch_size = x.shape[0]
     for i in range(batch_size):
@@ -32,23 +37,35 @@ def dice_coeff(x: torch.Tensor, target: torch.Tensor, ignore_index: int = -100, 
         sets_sum = torch.sum(x_i) + torch.sum(t_i)
         if sets_sum == 0:
             sets_sum = 2 * inter
-        
-        d += (2  * inter + epsilon) / (sets_sum + epsilon)
+
+        d += (2 * inter + epsilon) / (sets_sum + epsilon)
 
     return d / batch_size
 
 
-def multiclass_dice_coeff(x: torch.Tensor, target: torch.Tensor, ignore_index: int = -100, epsilon: float = 1e-6):
-    """ Average of DICE coefficient for all classes """
+def multiclass_dice_coeff(
+    x: torch.Tensor,
+    target: torch.Tensor,
+    ignore_index: int = -100,
+    epsilon: float = 1e-6,
+):
+    """Average of DICE coefficient for all classes"""
     dice = 0.0
     for channel in range(x.shape[1]):
-        dice += dice_coeff(x[:, channel, ...], target[:, channel, ...], ignore_index, epsilon)
-    
+        dice += dice_coeff(
+            x[:, channel, ...], target[:, channel, ...], ignore_index, epsilon
+        )
+
     return dice / x.shape[1]
 
 
-def dice_loss(x: torch.Tensor, target: torch.Tensor, multiclass: bool = False, ignore_index: int = -100):
-    """ DICE loss between 0 and 1 """
+def dice_loss(
+    x: torch.Tensor,
+    target: torch.Tensor,
+    multiclass: bool = False,
+    ignore_index: int = -100,
+):
+    """DICE loss between 0 and 1"""
     x = nn.functional.softmax(x, dim=1)
     fn = multiclass_dice_coeff if multiclass else dice_coeff
     return 1 - fn(x, target, ignore_index=ignore_index)
