@@ -15,7 +15,8 @@
 
   The tools used in the construction of the project were:
 
-  - [Name Tech](UrlForTheTech)
+  - [Python](https://www.python.org/)
+  - [PyTorch](https://pytorch.org/)
 
   <h2 id="usage" > 👷 Usage </h2>
 

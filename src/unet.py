@@ -97,10 +97,4 @@ class UNet(nn.Module):
         x = self.up4(x, x1)
         logits = self.out_conv(x)
 
-        return {"out": logits}
-
-
-if __name__ == "__main__":
-    x = torch.randn((1, 3, 256, 256))
-    net = UNet(in_channels=3, num_classes=2, bilinear=True)
-    print("Tensor shape:", net(x)["out"].shape)
+        return logits
