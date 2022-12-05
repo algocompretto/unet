@@ -105,12 +105,13 @@ def train_net(
                 )
 
                 images = images.to(device=device, dtype=torch.float32)
+                # TODO: DEBUG TENSOR CASTING AND WHY 65535 value
+                true_masks = true_masks.to(device=device, dtype=torch.float32)
+                true_masks /= 257*255
                 true_masks = true_masks.to(device=device, dtype=torch.long)
 
                 with torch.cuda.amp.autocast(enabled=amp):
                     masks_pred = net(images)
-                    print("masks prediction:", masks_pred.shape)
-                    print("true masks:", true_masks.shape)
                     loss = criterion(masks_pred, true_masks) + dice_loss(
                         F.softmax(masks_pred, dim=1).float(),
                         F.one_hot(true_masks, net.n_classes)
