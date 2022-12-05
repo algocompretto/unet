@@ -161,3 +161,4 @@ data/
 .vscode/
 __pycache__/
 .venv/
+wandb/
