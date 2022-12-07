@@ -6,6 +6,16 @@ from utils.dice_score import multiclass_dice_coeff, dice_coeff
 
 
 def evaluate(net, dataloader, device):
+    """Evaluates the trained Network on the dataset provided and using the device specified.
+
+    Args:
+        net (_type_): UNet network trained.
+        dataloader (_type_): Dataset loader to be used in the validation step.
+        device (_type_): The device to load the model, data and perform computations.
+
+    Returns:
+        _type_: Returns the mean Dice score.
+    """
     net.eval()
     num_val_batches = len(dataloader)
     dice_score = 0

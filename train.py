@@ -21,6 +21,7 @@ dir_checkpoint = Path("./checkpoints/")
 
 
 def force_cudnn_initialization():
+    """Utility function to force the CUDA initialization, preventing the memory leak."""
     s = 8
     dev = torch.device("cuda")
     torch.nn.functional.conv2d(
@@ -187,6 +188,11 @@ def train_net(
 
 
 def get_args():
+    """Getting the arguments using the argparse module.
+
+    Returns:
+        _type_: Returns a dictionary of arguments compiled.
+    """
     parser = argparse.ArgumentParser(
         description="Train the UNet on images and target masks"
     )
