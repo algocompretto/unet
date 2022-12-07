@@ -2,6 +2,13 @@ import matplotlib.pyplot as plt
 
 
 def plot_img_and_mask(img, mask):
+    """Utility function to plot the image and mask respectively as 
+    figures in the same axis using the matplotlib library.
+
+    Args:
+        img (PIL.Image): Image object.
+        mask (PIL.Image): The respective `img` mask.
+    """
     classes = mask.shape[0] if len(mask.shape) > 2 else 1
     fig, ax = plt.subplots(1, classes + 1)
     ax[0].set_title("Input image")
