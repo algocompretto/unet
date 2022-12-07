@@ -113,9 +113,7 @@ def train_net(
                 )
 
                 images = images.to(device=device, dtype=torch.float32)
-                # TODO: DEBUG TENSOR CASTING AND WHY 65535 value
-                true_masks = true_masks.to(device=device, dtype=torch.float32)
-                true_masks /= 257 * 255
+                true_masks = torch.div(true_masks, 257 * 255)
                 true_masks = true_masks.to(device=device, dtype=torch.long)
 
                 with torch.cuda.amp.autocast(enabled=amp):
@@ -205,7 +203,7 @@ def get_args():
         dest="batch_size",
         metavar="B",
         type=int,
-        default=1,
+        default=4,
         help="Batch size",
     )
     parser.add_argument(
@@ -253,7 +251,7 @@ if __name__ == "__main__":
 
     # Forcing cuDNN initialization as the default is lazy loading
     # see: https://stackoverflow.com/questions/66588715/runtimeerror-cudnn-error-cudnn-status-not-initialized-using-pytorch
-    force_cudnn_initialization()
+    # force_cudnn_initialization()
 
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
