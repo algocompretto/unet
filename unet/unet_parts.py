@@ -1,12 +1,15 @@
-""" Parts of the U-Net model """
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 
 class DoubleConv(nn.Module):
-    """(convolution => [BN] => ReLU) * 2"""
+    """This module applies convolution to the input,
+    followed by a batch normalization layer and a ReLU activation function twice.
+
+    Args:
+        nn (nn.Module): Base class for all neural network modules.
+    """
 
     def __init__(self, in_channels, out_channels, mid_channels=None):
         super().__init__()
@@ -26,7 +29,11 @@ class DoubleConv(nn.Module):
 
 
 class Down(nn.Module):
-    """Downscaling with maxpool then double conv"""
+    """Downscaling with `MaxPool` then double convolution on input data.
+
+    Args:
+        nn (nn.Module): Base class for all neural network modules.
+    """
 
     def __init__(self, in_channels, out_channels):
         super().__init__()
@@ -39,7 +46,11 @@ class Down(nn.Module):
 
 
 class Up(nn.Module):
-    """Upscaling then double conv"""
+    """Upscaling then double convolution on input data.
+
+    Args:
+        nn (nn.Module): Base class for all neural network modules.
+    """
 
     def __init__(self, in_channels, out_channels, bilinear=True):
         super().__init__()
@@ -69,6 +80,11 @@ class Up(nn.Module):
 
 
 class OutConv(nn.Module):
+    """Outer convolution step, map each n-component feature vector to the desired number of classes.
+
+    Args:
+        nn (nn.Module): Base class for all neural network modules.
+    """
     def __init__(self, in_channels, out_channels):
         super(OutConv, self).__init__()
         self.conv = nn.Conv2d(in_channels, out_channels, kernel_size=1)

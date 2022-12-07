@@ -65,7 +65,6 @@ class BasicDataset(Dataset):
         else:
             return Image.open(filename)
 
-
     def __getitem__(self, idx):
         name = self.ids[idx]
         mask_file = list(self.masks_dir.glob(name + self.mask_suffix + ".*"))
