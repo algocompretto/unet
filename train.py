@@ -113,18 +113,16 @@ def train_net(
                 )
 
                 images = images.to(device=device, dtype=torch.float32)
-                true_masks = torch.div(true_masks, 257 * 255)
-                true_masks = true_masks.to(device=device, dtype=torch.long)
+                true_masks = torch.div(true_masks, 257 * 255).to(device=device, dtype=torch.long)
 
                 with torch.cuda.amp.autocast(enabled=amp):
                     masks_pred = net(images)
-                    loss = criterion(masks_pred, true_masks) + dice_loss(
-                        F.softmax(masks_pred, dim=1).float(),
-                        F.one_hot(true_masks, net.n_classes)
-                        .permute(0, 3, 1, 2)
-                        .float(),
-                        multiclass=True,
-                    )
+                    crit_loss = criterion(masks_pred, true_masks)
+
+                    pred_soft = F.softmax(masks_pred, dim=1)
+                    masks_encoded = F.one_hot(true_masks, net.n_classes).permute(0, 3, 1, 2).to(device=device, dtype=torch.float32)
+                    d_loss = dice_loss(pred_soft, masks_encoded, multiclass=True)
+                    loss = crit_loss + d_loss
 
                 optimizer.zero_grad(set_to_none=True)
                 grad_scaler.scale(loss).backward()
