@@ -10,6 +10,12 @@ from torch.utils.data import Dataset
 
 
 class BasicDataset(Dataset):
+    """Base class for all dataset modules.
+
+    Args:
+        Dataset (Dataset): Base class for all dataset modules.
+    """
+
     def __init__(
         self, images_dir: str, masks_dir: str, scale: float = 1.0, mask_suffix: str = ""
     ):
@@ -34,7 +40,17 @@ class BasicDataset(Dataset):
         return len(self.ids)
 
     @staticmethod
-    def preprocess(pil_img, scale, is_mask):
+    def preprocess(pil_img: Image, scale: int, is_mask: bool):
+        """Preprocess the `pil_image` by rescaling it.
+
+        Args:
+            pil_img (PIL.Image): The image to be segmented.
+            scale (int): The scaling factor for the image.
+            is_mask (bool): Whether the image is a mask or a training image.
+
+        Returns:
+            np.ndarray: Returns the image after all preprocessing steps
+        """
         w, h = pil_img.size
         newW, newH = int(scale * w), int(scale * h)
         assert (
@@ -56,7 +72,15 @@ class BasicDataset(Dataset):
         return img_ndarray
 
     @staticmethod
-    def load(filename):
+    def load(filename: str):
+        """Loads the image depending on its file extension.
+
+        Args:
+            filename (str): Filename to be loaded by the PIL.Image module.
+
+        Returns:
+            PIL.Image: Return the image as a PIL.Image object
+        """
         ext = splitext(filename)[1]
         if ext == ".npy":
             return Image.fromarray(np.load(filename))
@@ -93,5 +117,10 @@ class BasicDataset(Dataset):
 
 
 class TGSDataset(BasicDataset):
+    """TGS Dataset created by instantiating the `BasicDataset` class.
+
+    Args:
+        BasicDataset (BasicDataset): Base class for all dataset modules.
+    """
     def __init__(self, images_dir, masks_dir, scale=1):
         super().__init__(images_dir, masks_dir, scale)
