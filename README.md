@@ -1,10 +1,14 @@
 <h1 align="center">UNet architecture for salt segmentation</h1>
-
-  <p align="center">
+<p align="center">
   <a href="#objective">Objective</a> •
   <a href="#technologies">Technologies</a> •
   <a href="#usage">Usage</a> •
-  </p>
+</p>
+  
+<img src="assets/test_1.png" alt="First image test"/>
+<img src="assets/test_2.png" alt="Second image test"/>
+<img src="assets/test_3.png" alt="Third image test"/>
+  
 
   <h2 id="objective" > 🎯 Objectives </h2>
 
