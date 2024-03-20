@@ -1,4 +1,4 @@
-black==22.10.0
+black==24.3.0
 kaggle==1.5.12
 matplotlib==3.6.2
 pip-chill==1.0.1
